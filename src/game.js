@@ -1,8 +1,8 @@
 
 const TWISTER_LENGTH = 6;
-export const getWordsArray = path =>
+export const readWordsArray = async path =>
 {
-    fetch(path)
+    return fetch(path)
     .then(res => 
     {
         console.log(res);
@@ -11,11 +11,24 @@ export const getWordsArray = path =>
     .then(text => 
     {
         return text.split('\r\n')
-    })
-    .then(ars => console.log(ars))
+    });
 };
+
+const isWordContained = (smallWord, largeWord) =>
+{
+    return Array(smallWord).every(letter => 
+    {
+        const index = largeWord.search(letter);
+        if (index === -1)
+            return false;
+        largeWord = largeWord.slice(0, index) + largeWord.slice(index + 1);
+        return true;
+    });
+}
 
 export const getGameWords = allWords => 
 {
-    all
-}
+    const twister_words = allWords.filter(word => word.length === TWISTER_LENGTH);
+    const chosen_word = twister_words[Math.floor(Math.random() * twister_words.length)];
+    return allWords.filter(word => isWordContained(word, chosen_word));
+};

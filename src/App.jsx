@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import './App.css'
-import { getWordsArray } from './game'
+import { readWordsArray, getGameWords } from './game'
 
 function App() {
   const [isGameActive, isGameActiveSet] = useState(false);
@@ -8,7 +8,10 @@ function App() {
   {
     console.log(isGameActive);
     isGameActiveSet(true);
-    getWordsArray('words.txt');
+    words = readWordsArray('words.txt').then(words =>
+    {
+      console.log(getGameWords(words));
+    });
   }
   
   return (
@@ -18,4 +21,4 @@ function App() {
   )
 }
 
-export default App
+export default App;
