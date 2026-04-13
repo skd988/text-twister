@@ -1,34 +1,59 @@
-
 const TWISTER_LENGTH = 6;
+
 export const readWordsArray = async path =>
 {
-    return fetch(path)
-    .then(res => 
-    {
-        console.log(res);
-        return res.text(); 
-    })
-    .then(text => 
-    {
-        return text.split('\r\n')
-    });
+  return fetch(path)
+  .then(res => res.text())
+  .then(text => text.split('\r\n'));
 };
 
-const isWordContained = (smallWord, largeWord) =>
+const lettersObjectFromWord = word => 
 {
-    return Array(smallWord).every(letter => 
-    {
-        const index = largeWord.search(letter);
-        if (index === -1)
-            return false;
-        largeWord = largeWord.slice(0, index) + largeWord.slice(index + 1);
-        return true;
-    });
+  const letters = {};
+  Array.from(word).forEach(l => 
+  {
+    if (letters[l] !== undefined)
+      letters[l] += 1;
+    else
+      letters[l] = 1; 
+  });
+  return letters;
+};
+
+const shuffleArray = arr => 
+{
+  for(let i = 0; i < arr.length; ++i)
+  {
+    let place = Math.floor(Math.random() * (arr.length - i)) + i
+    let temp = arr[i];
+    arr[i] = arr[place];
+    arr[place] = temp;
+  }
+
+  return arr;
 }
 
 export const getGameWords = allWords => 
 {
-    const twister_words = allWords.filter(word => word.length === TWISTER_LENGTH);
-    const chosen_word = twister_words[Math.floor(Math.random() * twister_words.length)];
-    return allWords.filter(word => isWordContained(word, chosen_word));
-};
+  const twisterWords = allWords.filter(word => word.length === TWISTER_LENGTH);
+  const chosenWord = twisterWords[Math.floor(Math.random() * twisterWords.length)];
+  const letters = lettersObjectFromWord(chosenWord)
+  return {'letters': shuffleArray(Array.from(chosenWord)), 'words': allWords.filter(word => 
+  {
+    const wordLetters = lettersObjectFromWord(word);
+    return Object.keys(wordLetters).every(l => letters[l] !== undefined && wordLetters[l] <= letters[l]); 
+  })
+  //.sort((a, b) => a.length !== b.length? a.length - b.length : (a < b? -1 : (b < a? 1 : 0)))};
+  .sort((a, b) => 
+  {
+    if (a.length !== b.length)
+      return a.length - b.length;
+    if (a > b)
+      return -1;
+    if (a < b)
+      return 1;
+    return 0;
+  })
+  .map(word => ({'word': word, 'found': false}))
+  };
+}
