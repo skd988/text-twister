@@ -1,4 +1,4 @@
-const TWISTER_LENGTH = 6;
+export const TWISTER_LENGTH = 6;
 
 export const readWordsArray = async path =>
 {
@@ -22,6 +22,7 @@ const lettersObjectFromWord = word =>
 
 const shuffleArray = arr => 
 {
+  console.log(arr);
   for(let i = 0; i < arr.length; ++i)
   {
     let place = Math.floor(Math.random() * (arr.length - i)) + i
@@ -29,6 +30,7 @@ const shuffleArray = arr =>
     arr[i] = arr[place];
     arr[place] = temp;
   }
+  console.log(arr);
 
   return arr;
 }
