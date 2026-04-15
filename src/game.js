@@ -20,27 +20,12 @@ const lettersObjectFromWord = word =>
   return letters;
 };
 
-const shuffleArray = arr => 
-{
-  console.log(arr);
-  for(let i = 0; i < arr.length; ++i)
-  {
-    let place = Math.floor(Math.random() * (arr.length - i)) + i
-    let temp = arr[i];
-    arr[i] = arr[place];
-    arr[place] = temp;
-  }
-  console.log(arr);
-
-  return arr;
-}
-
 export const getGameWords = allWords => 
 {
   const twisterWords = allWords.filter(word => word.length === TWISTER_LENGTH);
   const chosenWord = twisterWords[Math.floor(Math.random() * twisterWords.length)];
   const letters = lettersObjectFromWord(chosenWord)
-  return {'letters': shuffleArray(Array.from(chosenWord)), 'words': allWords.filter(word => 
+  return allWords.filter(word => 
   {
     const wordLetters = lettersObjectFromWord(word);
     return Object.keys(wordLetters).every(l => letters[l] !== undefined && wordLetters[l] <= letters[l]); 
@@ -56,6 +41,5 @@ export const getGameWords = allWords =>
       return 1;
     return 0;
   })
-  .map(word => ({'word': word, 'found': false}))
-  };
+  .map(word => ({'word': word, 'found': false}));
 }
